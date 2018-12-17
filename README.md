@@ -32,14 +32,17 @@ This script basically dumps & lists the following settings:
 | Access Permission | Describes the Access Control List (ACL) of the principals that can access instances of this class. This ACL is used only by applications that do not call CoInitializeSecurity. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultaccesspermission|
 | Launch Permission | Describes the Access Control List (ACL) of the principals that can start new servers for this class. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultlaunchpermission |
 | Default Permission | As per https://docs.microsoft.com/en-gb/windows/desktop/com/com-security-defaults |
-| Local Launch | |  
-| Local Activate | |
-| Remote Launch | |
-| Remote Activation | |
+| Local Launch | This value represents the right of a security principal to use ORB-specific local mechanisms to cause a component to be executed, where the precise meaning of execute depends on the context |  
+| Local Activate | This value represents the right of a security principal to use ORB-specific local mechanisms to activate a component |
+| Remote Launch | This value represents the right of a security principal to use ORB-specific remote mechanisms to cause a component to be executed, where the precise meaning of execute depends on the context |
+| Remote Activation | This value represents the right of a security principal to use ORB-specific local mechanisms to activate a component |
 
 Source: 
 https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
 https://docs.microsoft.com/en-us/windows/desktop/com/access-control-lists-for-com
+https://msdn.microsoft.com/en-us/library/dd366181.aspx
+https://docs.microsoft.com/en-us/windows/desktop/api/accctrl/ns-accctrl-_actrl_access_entrya
+https://github.com/Microsoft/Windows-classic-samples/blob/master/Samples/Win7Samples/com/fundamentals/dcom/dcomperm/ListAcl.Cpp
 
 ### Why this is important? 
 
