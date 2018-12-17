@@ -161,15 +161,16 @@ foreach ($APPID in $ApplicationID) {
    $reg_perms = ($regkey | Get-ItemProperty -Name "$($Type)Permission")."$($Type)Permission"
    $sd = New-Object System.Security.AccessControl.RawSecurityDescriptor($reg_perms, 0)
    $permissionsApplied = resolvePermission $sd $Type
-   if ($audit){
-   getCLIDMethods($APPID.ToString().split("\\")[2])
-   }
+
    } catch {
       #If there is no Access or Launch key this means DCOM is using "default" permissions
       if ($_.Exception.Message -match "Property $($Type)Permission does not exist") {
          Write-Host "[!] WARNING: $Type permissions are not applied for $APPID, default permission in place" -ForegroundColor Red
    } else {throw $_ }
-
+   #Audit only if enabled by flag
+   if ($audit){
+   getCLIDMethods($APPID.ToString().split("\\")[2])
+   }
 
      }#EOL 
    }#EOL
