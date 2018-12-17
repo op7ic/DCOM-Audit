@@ -38,13 +38,14 @@ This script basically dumps & lists the following settings:
 | Remote Activation | This value represents the right of a security principal to use ORB-specific local mechanisms to activate a component |
 
 Source: 
+
 https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
 https://docs.microsoft.com/en-us/windows/desktop/com/access-control-lists-for-com
 https://msdn.microsoft.com/en-us/library/dd366181.aspx
 https://docs.microsoft.com/en-us/windows/desktop/api/accctrl/ns-accctrl-_actrl_access_entrya
 https://github.com/Microsoft/Windows-classic-samples/blob/master/Samples/Win7Samples/com/fundamentals/dcom/dcomperm/ListAcl.Cpp
 
-### Why this is important? 
+### Why this is important since Windows XP? 
 
 COM server applications have two types of permissions: launch permissions and access permissions. Launch permissions control authorization to start a COM server during COM activation if the server is not already running. These permissions are defined as security descriptors that are specified in registry settings. Access permissions control authorization to call a running COM server. These permissions are defined as security descriptors provided to the COM infrastructure through the CoInitializeSecurity API, or using registry settings. Both launch and access permissions allow or deny access based on principals, and make no distinction as to whether the caller is local to the server or remote.
 
@@ -54,7 +55,9 @@ COM activation is the act of getting a COM interface proxy on a client by callin
 
 The second change is that the call and activation rights are separated to reflect to two distinct operations and to move the activation right from the access permission ACL to the launch permission ACL. Because activation and launching are both related to acquiring an interface pointer, activation and launch access rights logically belong together in one ACL. And because you always specify launch permissions through configuration (as compared to access permissions, which are often specified programmatically), putting the activation rights in the launch permission ACL provides the administrator with control over activation.
 
-Source: https://docs.microsoft.com/en-us/windows/desktop/com/dcom-security-enhancements-in-windows-xp-service-pack-2-and-windows-server-2003-service-pack-1
+Source: 
+
+https://docs.microsoft.com/en-us/windows/desktop/com/dcom-security-enhancements-in-windows-xp-service-pack-2-and-windows-server-2003-service-pack-1
 
 ### Tested On
 
