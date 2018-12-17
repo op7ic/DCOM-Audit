@@ -32,8 +32,29 @@ This script basically dumps & lists the following settings:
 | Access Permission | Describes the Access Control List (ACL) of the principals that can access instances of this class. This ACL is used only by applications that do not call CoInitializeSecurity. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultaccesspermission|
 | Launch Permission | Describes the Access Control List (ACL) of the principals that can start new servers for this class. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultlaunchpermission |
 | Default Permission | As per https://docs.microsoft.com/en-gb/windows/desktop/com/com-security-defaults |
+| Local Launch | |  
+| Local Activate | |
+| Remote Launch | |
+| Remote Activation | |
 
-Source: https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
+Source: 
+https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
+https://docs.microsoft.com/en-us/windows/desktop/com/access-control-lists-for-com
+
+### Why this is important? 
+
+```
+COM server applications have two types of permissions: launch permissions and access permissions. Launch permissions control authorization to start a COM server during COM activation if the server is not already running. These permissions are defined as security descriptors that are specified in registry settings. Access permissions control authorization to call a running COM server. These permissions are defined as security descriptors provided to the COM infrastructure through the CoInitializeSecurity API, or using registry settings. Both launch and access permissions allow or deny access based on principals, and make no distinction as to whether the caller is local to the server or remote.
+
+The first change distinguishes the COM access rights, based on distance. The two distances that are defined are Local and Remote. A Local COM message arrives by way of the Local Remote Procedure Call (LRPC) protocol, while a Remote COM message arrives by way of a remote procedure call (RPC) host protocol like transmission control protocol (TCP).
+
+COM activation is the act of getting a COM interface proxy on a client by calling CoCreateInstance or one of its variants. As a side effect of this activation process, sometimes a COM server must be started to fulfill the client's request. A launch permissions ACL asserts who is allowed to start a COM server. An access permissions ACL asserts who is allowed to activate a COM object or call that object once the COM server is already running.
+
+The second change is that the call and activation rights are separated to reflect to two distinct operations and to move the activation right from the access permission ACL to the launch permission ACL. Because activation and launching are both related to acquiring an interface pointer, activation and launch access rights logically belong together in one ACL. And because you always specify launch permissions through configuration (as compared to access permissions, which are often specified programmatically), putting the activation rights in the launch permission ACL provides the administrator with control over activation.
+```
+
+Source: https://docs.microsoft.com/en-us/windows/desktop/com/dcom-security-enhancements-in-windows-xp-service-pack-2-and-windows-server-2003-service-pack-1
+
 ### Tested On
 
 * Windows 7 x86
