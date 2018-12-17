@@ -141,6 +141,9 @@ param (
     [switch]$audit
 );
 
+write-host "-=[ DCOM-Audit v0.1 ]=-"
+write-host "      by op7ic        "
+
 
 #Extract all application IDs from registry and filter out just DCOM IDs, this varies based on x86 or x64 achitecture
 New-PSDrive -PSProvider Registry -Root HKEY_CLASSES_ROOT -Name HKCR -Scope Local -ErrorAction SilentlyContinue | Out-Null

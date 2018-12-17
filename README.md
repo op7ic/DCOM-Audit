@@ -6,7 +6,7 @@ DCOM-Auditor is a simple PowerShell script which dumps all permissions on DCOM o
 ### Help
 
 ```
--=[ DCOM-Audior v0.1 ]=-
+-=[ DCOM-Audit v0.1 ]=-
         by op7ic
 
 Usage: powershell .\DCOM-Audior.ps1 [options]
@@ -25,8 +25,8 @@ Options:
 
 | Permission  | Explanation | 
 | ------------- | ------------- |
-| Access Permission | Describes the Access Control List (ACL) of the principals that can access instances of this class. This ACL is used only by applications that do not call CoInitializeSecurity. |
-| Launch Permission | Describes the Access Control List (ACL) of the principals that can start new servers for this class. |
+| Access Permission | Describes the Access Control List (ACL) of the principals that can access instances of this class. This ACL is used only by applications that do not call CoInitializeSecurity. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultaccesspermission|
+| Launch Permission | Describes the Access Control List (ACL) of the principals that can start new servers for this class. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultlaunchpermission |
 | Default Permission | As per https://docs.microsoft.com/en-gb/windows/desktop/com/com-security-defaults |
 
 From https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
