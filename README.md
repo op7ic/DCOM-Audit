@@ -23,7 +23,7 @@ Options:
 ### TL;DR
 This script basically dumps & lists the following settings:
 
-![Alt text](pic/what-it-audits?raw=true "What It Audits")
+![Alt text](pic/what-it-audits.png?raw=true "What It Audits")
 
 ### Interpreting Output
 
