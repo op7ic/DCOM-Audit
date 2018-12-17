@@ -37,12 +37,16 @@ This script basically dumps & lists the following settings:
 | Remote Launch | This value represents the right of a security principal to use ORB-specific remote mechanisms to cause a component to be executed, where the precise meaning of execute depends on the context |
 | Remote Activation | This value represents the right of a security principal to use ORB-specific local mechanisms to activate a component |
 
-Source: 
+Sources: 
 
 https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
+
 https://docs.microsoft.com/en-us/windows/desktop/com/access-control-lists-for-com
+
 https://msdn.microsoft.com/en-us/library/dd366181.aspx
+
 https://docs.microsoft.com/en-us/windows/desktop/api/accctrl/ns-accctrl-_actrl_access_entrya
+
 https://github.com/Microsoft/Windows-classic-samples/blob/master/Samples/Win7Samples/com/fundamentals/dcom/dcomperm/ListAcl.Cpp
 
 ### Why this is important? 
@@ -67,8 +71,8 @@ https://docs.microsoft.com/en-us/windows/desktop/com/dcom-security-enhancements-
 
 ### Limitations
 
-- The script is quite slow
-- In order to check for exposed methods this script will initialize given CLSID via "[activator]::CreateInstance([type]::GetTypeFromCLSID)" and then release initialized object via "[System.Runtime.Interopservices.Marshal]::ReleaseComObject()". This might cause existing DCOM objects to shut down.
+* The script is quite slow
+* In order to check for exposed methods this script will initialize given CLSID via "[activator]::CreateInstance([type]::GetTypeFromCLSID)" and then release initialized object via "[System.Runtime.Interopservices.Marshal]::ReleaseComObject()". This might cause existing DCOM objects to shut down.
 
 
 ## TODO
