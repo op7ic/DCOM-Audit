@@ -118,20 +118,18 @@ try{
   $MemberCount = ($COM | Get-Member).Count
   $cOMmethods= @($COM | Get-Member).Name
 
-  foreach ($danger in $cOMmethods){
-    foreach ($x in $vulnerable){
-         if ($x -match $danger){ 
-            write-host "[!] Potentially dangerous method: $x is present in $CLID" -ForegroundColor Green
-    }
-   }
+  if($cOMmethods| Where {$vulnerable -Contains $_})
+  {
+   Write-host "[!] Potentially dangerous method is present in $CLID" -ForegroundColor Green 
   }
+  #Relase COM object
+ [System.Runtime.Interopservices.Marshal]::ReleaseComObject($COM) | Out-Null -ErrorAction Continue
 }catch{
   if($_.Exception.Message -like "*80040154*"){
    Write-Host "[*] WARNING: Cannot load x86 $CLID into x64 process. Method check skipped." -ForegroundColor Yellow
   }
 }
-#Relase COM object
-[System.Runtime.Interopservices.Marshal]::ReleaseComObject($COM) | Out-Null -ErrorAction Continue
+
 }
 
 
