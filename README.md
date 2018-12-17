@@ -44,7 +44,7 @@ https://docs.microsoft.com/en-us/windows/desktop/api/accctrl/ns-accctrl-_actrl_a
 https://github.com/Microsoft/Windows-classic-samples/blob/master/Samples/Win7Samples/com/fundamentals/dcom/dcomperm/ListAcl.Cpp
 
 ### TL;DR
-This script basically dumps & lists the following settings:
+This script basically dumps & lists the following settings from "dcomcnfg.exe":
 
 ![Alt text](pic/what-it-audits.png?raw=true "What It Audits")
 
