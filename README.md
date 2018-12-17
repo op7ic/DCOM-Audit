@@ -1,7 +1,7 @@
 DCOM-Auditor
 ===============
 
-DCOM-Auditor is a simple PowerShell script which dumps all permissions on DCOM objects from registry, parses access flags, and checks DCOM for presence of potentially dangerous methods (i.e. Shell,Exec,DDEInitiate). In the default mode it just dumps all permissions, one per line.
+DCOM-Auditor is a simple PowerShell script which dumps all permissions on DCOM objects from registry, parses access flags, and checks DCOM for presence of potentially dangerous methods (i.e. Shell,Exec,DDEInitiate). In the default mode it just dumps all permissions, one per line. When "-audit" flag is added the script will also enumerate all methods exposed by given DCOM and check them against blacklist.
 
 ### Help
 
@@ -12,7 +12,7 @@ DCOM-Auditor is a simple PowerShell script which dumps all permissions on DCOM o
 Usage: powershell .\DCOM-Audior.ps1 [options]
 
 Options:
-  -audit   #Audit all listed DCOM for potentially dangerous methods  
+  -audit    Audit all listed DCOM for potentially dangerous methods  
 ```
 
 ### Output
