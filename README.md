@@ -15,15 +15,9 @@ Options:
   -audit   #Audit all listed DCOM for potentially dangerous methods  
 ```
 
-
 ### Output
 
 ![Alt text](pic/dcom-run.png?raw=true "Standard Output")
-
-### TL;DR
-This script basically dumps & lists the following settings:
-
-![Alt text](pic/what-it-audits.png?raw=true "What It Audits")
 
 ### Interpreting Output
 
@@ -48,6 +42,11 @@ https://msdn.microsoft.com/en-us/library/dd366181.aspx
 https://docs.microsoft.com/en-us/windows/desktop/api/accctrl/ns-accctrl-_actrl_access_entrya
 
 https://github.com/Microsoft/Windows-classic-samples/blob/master/Samples/Win7Samples/com/fundamentals/dcom/dcomperm/ListAcl.Cpp
+
+### TL;DR
+This script basically dumps & lists the following settings:
+
+![Alt text](pic/what-it-audits.png?raw=true "What It Audits")
 
 ### Why this is important? 
 
