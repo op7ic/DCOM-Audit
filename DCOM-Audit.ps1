@@ -94,7 +94,7 @@ function resolvePermission ($sd, $TypePermission) {
           Write-Host "[!] WARNING: 'Everyone' have $TypePermission permissions for $APPID and the following application-specific permission are present: $access" -ForegroundColor Green         
       }elseif ($User -like "NT AUTHORITY\Authenticated Users") { 
           Write-Host "[!] WARNING: 'Authenticated Users' have $TypePermission permissions for $APPID and the following application-specific permission are present: $access" -ForegroundColor Green
-      }elseif ($User -like "ALL APPLICATION PACKAGES"){
+      }elseif ($User -like "*ALL APPLICATION PACKAGES"){
           Write-Host "[!] WARNING: 'ALL APPLICATION PACKAGES' have $TypePermission permissions for $APPID and the following application-specific permission are present: $access" -ForegroundColor Green
       }else{
           Write-Host "[+] '$User' have $TypePermission permissions for $APPID and the following application-specific permission are present: $access" -ForegroundColor DarkYellow
