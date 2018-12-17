@@ -71,10 +71,10 @@ https://docs.microsoft.com/en-us/windows/desktop/com/dcom-security-enhancements-
 ### Limitations
 
 * The script is quite slow
-* In order to check for exposed methods this script will initialize given CLSID via "[activator]::CreateInstance([type]::GetTypeFromCLSID)" and then release initialized object via "[System.Runtime.Interopservices.Marshal]::ReleaseComObject()". This might cause existing DCOM objects to shut down.
+* In order to check for exposed methods this script will initialize given CLSID via "[activator]::CreateInstance([type]::GetTypeFromCLSID())" and then release initialized object via "[System.Runtime.Interopservices.Marshal]::ReleaseComObject()". This might cause existing DCOM objects to shut down.
 
 
 ## TODO
 - [ ] Output to files 
-- Audit option need work. DCOM object errors are currently supressed but that is not correct approach.
+- [ ] Audit option need work. DCOM object errors are currently suppressed but that is not correct approach.
 
