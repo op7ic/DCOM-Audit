@@ -20,6 +20,10 @@ Options:
 
 ![Alt text](pic/dcom-run.png?raw=true "Standard Output")
 
+### TL;DR
+This script basically dumps & lists the following settings:
+
+![Alt text](pic/what-it-audits?raw=true "What It Audits")
 
 ### Interpreting Output
 
@@ -29,7 +33,7 @@ Options:
 | Launch Permission | Describes the Access Control List (ACL) of the principals that can start new servers for this class. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultlaunchpermission |
 | Default Permission | As per https://docs.microsoft.com/en-gb/windows/desktop/com/com-security-defaults |
 
-From https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
+Source: https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
 ### Tested On
 
 * Windows 7 x86
