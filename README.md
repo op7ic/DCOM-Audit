@@ -29,7 +29,7 @@ Options:
 | Local Launch | This value represents the right of a security principal to use ORB-specific local mechanisms to cause a component to be executed, where the precise meaning of execute depends on the context |  
 | Local Activate | This value represents the right of a security principal to use ORB-specific local mechanisms to activate a component |
 | Remote Launch | This value represents the right of a security principal to use ORB-specific remote mechanisms to cause a component to be executed, where the precise meaning of execute depends on the context |
-| Remote Activation | This value represents the right of a security principal to use ORB-specific local mechanisms to activate a component |
+| Remote Activation | This value represents the right of a security principal to use ORB-specific remote mechanisms to activate a component |
 
 Sources: 
 
