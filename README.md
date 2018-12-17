@@ -76,4 +76,5 @@ https://docs.microsoft.com/en-us/windows/desktop/com/dcom-security-enhancements-
 
 ## TODO
 - [ ] Output to files 
+- Audit option need work. DCOM object errors are currently supressed but that is not correct approach.
 
