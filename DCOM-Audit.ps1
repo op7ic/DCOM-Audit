@@ -23,6 +23,7 @@ VERSION      DATE          AUTHOR
     https://github.com/sud0woodo/DCOMrade
     https://enigma0x3.net/2017/01/23/lateral-movement-via-dcom-round-2/
     https://www.cybereason.com/blog/dcom-lateral-movement-techniques
+	https://livelibrary.osisoft.com/LiveLibrary/content/en/int-dcom-v1/GUID-DA320A7C-F32B-4B12-A02C-E571BC5A0AAF
 
   .OUTPUT
     [+] BUILTIN\Users have Access permissions for HKEY_CLASSES_ROOT\AppID\{49EBD8BE-1A92-4A86-A651-70AC565E0FEB} and the following permission are present: LocalAccess
@@ -113,7 +114,7 @@ try{
   #Claim COM Object
   $COM = [activator]::CreateInstance([type]::GetTypeFromCLSID("$CLID","localhost"))
   #Potentially dangerous methods
-  $vulnerable= @("Shell","Execute","Navigate","DDEInitiate","CreateObject","RegisterXLL","ExecuteLine","NewCurrentDatabase","Service","Create","Run","Exec","Invoke","File","Method","Explore")
+  $vulnerable= @("Shell","Execute","Navigate","DDEInitiate","CreateObject","RegisterXLL","ExecuteLine","NewCurrentDatabase","Service","Create","Run","Exec","Invoke","File","Method","Explore","ExecWB")
   #Count the number of methods in the COM object
   $MemberCount = ($COM | Get-Member).Count
   $cOMmethods= @($COM | Get-Member).Name
