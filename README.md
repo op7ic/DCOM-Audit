@@ -223,7 +223,7 @@ title: DCOM Lateral Movement via MMC20.Application
 id: 51e47cc5-9e44-4c64-a819-7f8a8e3e3d1c
 status: production
 description: Detects usage of MMC20.Application COM object for remote command execution
-author: DCOM Auditor Enhanced
+
 date: 2024/01/15
 tags:
     - attack.lateral_movement
@@ -254,7 +254,7 @@ title: DCOM ShellWindows Object Abuse
 id: 16d71e55-43fd-4ee1-9701-8e30cbb85ebe
 status: production
 description: Detects potential abuse of ShellWindows COM object for code execution
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: sysmon
@@ -281,7 +281,7 @@ title: Suspicious DCOM Network Connection
 id: 91a2625b-6e94-4736-b0e1-c42885f0d5cc
 status: production
 description: Detects DCOM connections that may indicate lateral movement
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: sysmon
@@ -307,7 +307,7 @@ title: DCOM DLL Hijacking Attempt
 id: e5c2b032-b4dc-4a47-bfea-f0614b3a1f8f
 status: experimental
 description: Detects potential DLL hijacking via DCOM by monitoring DLL loads
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: sysmon
@@ -334,7 +334,7 @@ title: Excel 4.0 Macro Execution via DCOM
 id: 7c3e8e69-c4b6-48a0-abed-c0fbbaac7b0f
 status: production
 description: Detects Excel 4.0 macro execution potentially triggered via DCOM
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: security
@@ -363,7 +363,7 @@ title: DCOM Service Permission Modification
 id: 5f0e0877-296e-4d22-8bda-2a2e62814cf0
 status: production
 description: Detects modification of services associated with DCOM objects
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: system
@@ -387,7 +387,7 @@ title: Outlook COM Object Abuse for Persistence
 id: c3e76af4-d0cb-4588-81cf-ad5c45185aa8
 status: production
 description: Detects potential abuse of Outlook COM object for persistence
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: sysmon
@@ -419,7 +419,7 @@ title: DCOM Authentication Bypass Attempt
 id: bf9e1387-0040-4393-9bea-ac0a3d49f740
 status: production
 description: Detects attempts to bypass DCOM authentication
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: system
@@ -445,7 +445,7 @@ title: Remote WMI via DCOM
 id: 056094ef-0e37-4da9-85a6-c69088ba146d
 status: production
 description: Detects remote WMI execution potentially using DCOM
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: wmi
@@ -469,7 +469,7 @@ title: PowerShell DCOM Execution
 id: 5cd72f0e-5aea-451c-b55e-2ee8042c8a91
 status: production
 description: Detects PowerShell commands used for DCOM lateral movement
-author: DCOM Auditor Enhanced
+
 logsource:
     product: windows
     service: powershell
