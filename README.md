@@ -1,80 +1,192 @@
-DCOM-Auditor
-===============
+# DCOM-Audit
 
-DCOM-Auditor is a simple PowerShell script which dumps all permissions on DCOM objects from registry, parses access flags, and checks DCOM for presence of potentially dangerous methods (i.e. Shell,Exec,DDEInitiate). In the default mode it just dumps all permissions, one per line. When "-audit" flag is added the script will also enumerate all methods exposed by given DCOM and check them against blacklist.
+A comprehensive PowerShell-based security auditing tool for Windows DCOM (Distributed Component Object Model) permissions and configurations. DCOM-Audit provides deep analysis, vulnerability detection, attack scenario mapping, and actionable security recommendations for DCOM objects in Windows Environment.
 
-### Help
+## 🔥 Key Features
 
+- **Comprehensive Permission Analysis**: Audits both Launch and Access permissions for all DCOM objects
+- **Attack Scenario Detection**: Maps vulnerabilities to real-world attack techniques with examples
+- **DLL Hijacking Detection**: Identifies writable DLL paths and phantom DLL opportunities
+- **Service Security Analysis**: Checks permissions on DCOM-related Windows services
+- **Interface Enumeration**: Identifies exposed COM interfaces and dangerous methods
+- **Vulnerability Detection**: Identifies high-risk configurations and dangerous method exposures
+- **Risk-Based Reporting**: Categorizes findings by severity (Critical, High, Medium, Low)
+- **.NET Fallback Methods**: Ensures reliable auditing even when PowerShell methods fail
+- **Performance Optimizations**: Significantly faster than v1.0 with parallel processing support
+- **DCOM Hardening Verification**: Validates Windows DCOM security patches and configurations
+- **Multiple Output Formats**: HTML reports, CSV exports, and console output
+- **Mitigation Guidance**: Provides specific recommendations for each vulnerability
+- **MITRE ATT&CK Mapping**: Links findings to specific adversary techniques
+
+## 🛡️ Features
+
+### Advanced Attack Surface Analysis
+- **DLL Permission Checking**: Identifies DLL hijacking opportunities in DCOM server paths
+- **Service Permission Auditing**: Finds privilege escalation vectors via weak service ACLs
+- **Interface Analysis**: Enumerates COM interfaces to identify scriptable objects
+- **Known Exploit Detection**: Flags DCOM objects with documented exploitation techniques
+- **x86/x64 Compatibility**: Handles architecture mismatches gracefully
+- **Method Detection**: Uses multiple techniques to enumerate methods
+
+### Attack Scenario Mapping
+- Real-world exploitation examples for each vulnerability
+- MITRE ATT&CK technique mapping
+- Detection and prevention guidance
+- Sample attack code for security testing
+
+### Enhanced Detection Capabilities
+- SIEM/EDR detection rules in multiple formats (Sigma, Splunk, ELK, KQL)
+- PowerShell logging recommendations
+- Network-based detection strategies
+- Behavioral indicators of compromise
+
+## 📋 Requirements
+
+- Windows 7/Server 2008 R2 or later
+- PowerShell 4.0 or higher
+- Administrative privileges (for complete audit)
+- .NET Framework 4.5 or higher
+
+## 🚀 Quick Start
+
+```powershell
+# Basic audit (permissions only)
+.\DCOM-Auditor-Enhanced.ps1
+
+# Full audit with method enumeration
+.\DCOM-Auditor-Enhanced.ps1 -Audit
+
+# Generate report with CSV export
+.\DCOM-Auditor-Enhanced.ps1 -Audit -ExportCSV -OutputPath "C:\Reports"
+
+# Check DCOM hardening status
+.\DCOM-Auditor-Enhanced.ps1 -Audit -CheckMitigations
+
+# Fast mode (skip method enumeration)
+.\DCOM-Auditor-Enhanced.ps1 -FastMode
 ```
--=[ DCOM-Audit v0.1 ]=-
-        by op7ic
 
-Usage: powershell .\DCOM-Audior.ps1 [options]
+## 📊 Output Examples
 
-Options:
-  -audit    Audit all listed DCOM for potentially dangerous methods  
+### Console Output
+```
+[!] Critical Risk: Everyone has Launch permissions (LocalLaunch, RemoteLaunch) for {00020906-0000-0000-C000-000000000046}
+    Application: Microsoft Word Document
+
+[!] WARNING: Dangerous methods found in {00000300-0000-0000-C000-000000000046}
+    Methods: Shell, Execute, Navigate
 ```
 
-### Output
+### HTML Report
+The tool generates a comprehensive HTML report including:
+- Executive summary with risk statistics
+- DCOM hardening status
+- Prioritized recommendations
+- Detailed findings table with color-coded risk levels
 
-![Alt text](pic/dcom-run.png?raw=true "Standard Output")
+## 🔍 Understanding DCOM Permissions
 
-### Interpreting Output
+| Permission Type | Description | Risk Implications |
+|-----------------|-------------|-------------------|
+| **LocalLaunch** | Start COM server on local machine | Low risk if properly restricted |
+| **RemoteLaunch** | Start COM server from remote machine | High risk if granted to broad groups |
+| **LocalActivation** | Activate COM object locally | Medium risk depending on object |
+| **RemoteActivation** | Activate COM object remotely | High risk for privileged objects |
+| **LocalAccess** | Access running COM server locally | Low to medium risk |
+| **RemoteAccess** | Access running COM server remotely | High risk if unrestricted |
 
-| Permission  | Explanation | 
-| ------------- | ------------- |
-| Access Permission | Describes the Access Control List (ACL) of the principals that can access instances of this class. This ACL is used only by applications that do not call CoInitializeSecurity. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultaccesspermission|
-| Launch Permission | Describes the Access Control List (ACL) of the principals that can start new servers for this class. Can be modified as per https://docs.microsoft.com/en-gb/windows/desktop/com/defaultlaunchpermission |
-| Default Permission | As per https://docs.microsoft.com/en-gb/windows/desktop/com/com-security-defaults |
-| Local Launch | This value represents the right of a security principal to use ORB-specific local mechanisms to cause a component to be executed, where the precise meaning of execute depends on the context |  
-| Local Activate | This value represents the right of a security principal to use ORB-specific local mechanisms to activate a component |
-| Remote Launch | This value represents the right of a security principal to use ORB-specific remote mechanisms to cause a component to be executed, where the precise meaning of execute depends on the context |
-| Remote Activation | This value represents the right of a security principal to use ORB-specific remote mechanisms to activate a component |
+## 🛡️ Risk Categories
 
-Sources: 
+### Critical Risk
+- "Everyone" or "Authenticated Users" with remote permissions
+- Non-admin users with access to dangerous methods
+- Default permissions on sensitive DCOM objects
 
-https://docs.microsoft.com/en-gb/windows/desktop/com/appid-key
+### High Risk
+- Domain Users with launch/activation rights
+- Remote access permissions for non-administrative groups
+- Objects exposing dangerous methods without restrictions
 
-https://docs.microsoft.com/en-us/windows/desktop/com/access-control-lists-for-com
+### Medium Risk
+- Local permissions for non-admin users
+- Default permissions in use
+- Missing DCOM hardening configurations
 
-https://msdn.microsoft.com/en-us/library/dd366181.aspx
+## 🔧 DCOM Security Hardening
 
-https://docs.microsoft.com/en-us/windows/desktop/api/accctrl/ns-accctrl-_actrl_access_entrya
+### Apply KB5004442 Mitigations
+The tool checks for and recommends the following hardening measures:
 
-https://github.com/Microsoft/Windows-classic-samples/blob/master/Samples/Win7Samples/com/fundamentals/dcom/dcomperm/ListAcl.Cpp
+1. **Disable DCOM HTTP**
+   ```
+   HKLM\SOFTWARE\Microsoft\Ole\EnableDCOMHTTP = 0
+   ```
 
-### TL;DR
-This script basically dumps & lists the following settings from "dcomcnfg.exe":
+2. **Increase Authentication Level**
+   ```
+   HKLM\SOFTWARE\Microsoft\Ole\DefaultAuthenticationLevel = 5 (Packet Integrity)
+   ```
 
-![Alt text](pic/what-it-audits.png?raw=true "What It Audits")
+3. **Restrict Launch Permissions**
+   ```
+   HKLM\SOFTWARE\Microsoft\Ole\AllowLaunchActAsInteractiveUser = 0
+   ```
 
-### Why this is important? 
+### Additional Security Recommendations
 
-COM server applications have two types of permissions: launch permissions and access permissions. Launch permissions control authorization to start a COM server during COM activation if the server is not already running. These permissions are defined as security descriptors that are specified in registry settings. Access permissions control authorization to call a running COM server. These permissions are defined as security descriptors provided to the COM infrastructure through the CoInitializeSecurity API, or using registry settings. Both launch and access permissions allow or deny access based on principals, and make no distinction as to whether the caller is local to the server or remote.
+1. **Remove Unnecessary Permissions**
+   - Remove "Everyone" from all DCOM permissions
+   - Restrict "Authenticated Users" to local access only
+   - Limit remote access to specific administrative accounts
 
-The two distances that are defined are Local and Remote. A Local COM message arrives by way of the Local Remote Procedure Call (LRPC) protocol, while a Remote COM message arrives by way of a remote procedure call (RPC) host protocol like transmission control protocol (TCP).
+2. **Monitor High-Risk Objects**
+   - MMC Application Class (MMC20.Application)
+   - ShellWindows ({9BA05972-F6A8-11CF-A442-00A0C90A8F39})
+   - ShellBrowserWindow ({C08AFD90-F2A1-11D1-8455-00A0C91F3880})
 
-COM activation is the act of getting a COM interface proxy on a client by calling CoCreateInstance or one of its variants. As a side effect of this activation process, sometimes a COM server must be started to fulfill the client's request. A launch permissions ACL asserts who is allowed to start a COM server. An access permissions ACL asserts who is allowed to activate a COM object or call that object once the COM server is already running.
+3. **Implement Defense in Depth**
+   - Enable Windows Firewall rules for DCOM
+   - Use IPSec for DCOM authentication
+   - Implement network segmentation
 
-Call and activation rights are separated to reflect to two distinct operations and to move the activation right from the access permission ACL to the launch permission ACL. Because activation and launching are both related to acquiring an interface pointer, activation and launch access rights logically belong together in one ACL. And because you always specify launch permissions through configuration (as compared to access permissions, which are often specified programmatically), putting the activation rights in the launch permission ACL provides the administrator with control over activation.
+## 📝 Report Contents
 
-Source: 
+The generated reports include:
 
-https://docs.microsoft.com/en-us/windows/desktop/com/dcom-security-enhancements-in-windows-xp-service-pack-2-and-windows-server-2003-service-pack-1
+1. **Executive Summary**
+   - Total objects analyzed
+   - Risk distribution
+   - Critical findings count
 
-### Tested On
+2. **DCOM Hardening Status**
+   - Current security settings
+   - Compliance with recommendations
 
-* Windows 7 x86
-* Windows 7 x64
-* Windows 10 x64
+3. **Detailed Findings**
+   - Per-object permission analysis
+   - Risk scoring
+   - User/group mappings
 
-### Limitations
+4. **Recommendations**
+   - Prioritized by severity
+   - Specific remediation steps
+   - References to Microsoft guidance
 
-* The script is quite slow
-* In order to check for exposed methods this script will initialize given CLSID via "[activator]::CreateInstance([type]::GetTypeFromCLSID())" and then release initialized object via "[System.Runtime.Interopservices.Marshal]::ReleaseComObject()". This might cause existing DCOM objects to shut down.
+## 🔗 References
 
+- [Microsoft DCOM Security Feature Bypass (CVE-2021-26414)](https://support.microsoft.com/en-us/topic/kb5004442-manage-changes-for-windows-dcom-server-security-feature-bypass-cve-2021-26414-f1400b52-c141-43d2-941e-37ed901c769c)
+- [DCOM Authentication Hardening](https://techcommunity.microsoft.com/blog/windows-itpro-blog/dcom-authentication-hardening-what-you-need-to-know/3657154)
+- [MS-DCOM Protocol Specification](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dcom/4a893f3d-bd29-48cd-9f43-d9777a4415b0)
+- [COM Security Best Practices](https://docs.microsoft.com/en-us/windows/win32/com/security-in-com)
 
-## TODO
-- [ ] Output to files 
-- [ ] Audit option need work. DCOM object errors are currently suppressed but that is not correct approach.
+## 🤝 Contributing
 
+Contributions are welcome! Please submit issues and pull requests on GitHub.
+
+## License
+
+See LICENSE file
+
+## Disclaimer
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
