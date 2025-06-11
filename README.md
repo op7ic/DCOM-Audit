@@ -192,16 +192,13 @@ This guide provides security teams with actionable monitoring strategies for DCO
 
 
 ### 2. Known Exploitation Targets:
-```
-┌─────────────────────────────────────────┬──────────────────────┬───────────┐
-│ CLSID                                   │ Name                 │ Risk      │
-├─────────────────────────────────────────┼──────────────────────┼───────────┤
-│ {9BA05972-F6A8-11CF-A442-00A0C90A8F39} │ ShellWindows        │ CRITICAL  │
-│ {49B2791A-B1AE-4C90-9B8E-E860BA07F889} │ MMC20.Application   │ CRITICAL  │
-│ {00021401-0000-0000-C000-000000000046} │ ShellBrowserWindow  │ HIGH      │
-│ {F5078F35-C551-11D3-89B9-0000F81FE221} │ Outlook.Application │ HIGH      │
-└─────────────────────────────────────────┴──────────────────────┴───────────┘
-```
+
+| CLSID                                  | Name                | Risk     |
+|----------------------------------------|---------------------|----------|
+| {9BA05972-F6A8-11CF-A442-00A0C90A8F39} | ShellWindows        | CRITICAL |
+| {49B2791A-B1AE-4C90-9B8E-E860BA07F889} | MMC20.Application   | CRITICAL |
+| {00021401-0000-0000-C000-000000000046} | ShellBrowserWindow  | HIGH     |
+| {F5078F35-C551-11D3-89B9-0000F81FE221} | Outlook.Application | HIGH     |
 
 ### 2. Network Indicators
 
