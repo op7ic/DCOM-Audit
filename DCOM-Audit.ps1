@@ -962,14 +962,7 @@ function Export-Results {
 }
 
 # Main execution
-function Start-DCOMAudit {
-    Write-ColorOutput @"
-╔═══════════════════════════════════╗
-║     DCOM Security Auditor v2.0    ║
-║     Enhanced Edition              ║
-╚═══════════════════════════════════╝
-"@ -Color Cyan
-    
+function Start-DCOMAudit {    
     Write-ColorOutput "`nInitializing DCOM audit..." -Color Yellow
     
     # Create PSDrive for HKCR if not exists
