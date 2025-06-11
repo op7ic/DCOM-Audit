@@ -39,19 +39,19 @@ A comprehensive PowerShell-based security auditing tool for Windows DCOM (Distri
 
 ```powershell
 # Basic audit (permissions only)
-.\DCOM-Auditor-Enhanced.ps1
+.\DCOM-Audit.ps1
 
 # Full audit with method enumeration
-.\DCOM-Auditor-Enhanced.ps1 -Audit
+.\DCOM-Audit.ps1 -Audit
 
 # Generate report with CSV export
-.\DCOM-Auditor-Enhanced.ps1 -Audit -ExportCSV -OutputPath "C:\Reports"
+.\DCOM-Audit.ps1 -Audit -ExportCSV -OutputPath "C:\Reports"
 
 # Check DCOM hardening status
-.\DCOM-Auditor-Enhanced.ps1 -Audit -CheckMitigations
+.\DCOM-Audit.ps1 -Audit -CheckMitigations
 
 # Fast mode (skip method enumeration)
-.\DCOM-Auditor-Enhanced.ps1 -FastMode
+.\DCOM-Audit.ps1 -FastMode
 ```
 
 ## 📊 Output Examples
