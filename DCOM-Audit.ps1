@@ -28,8 +28,8 @@
     .\DCOM-Auditor-Enhanced.ps1 -Audit -OutputPath "C:\Reports" -ExportCSV
     
 .NOTES
-    Author: op7ic
-	Repository: https://github.com/op7ic/DCOM-Audit
+	Author: op7ic
+    Repository: https://github.com/op7ic/DCOM-Audit
 #>
 
 [CmdletBinding()]

@@ -19,6 +19,10 @@
     
 .EXAMPLE
     .\DCOM-Remediation-Helper.ps1 -AutoFix -BackupPath "C:\DCOM_Backups"
+
+.NOTES
+	Author: op7ic
+    Repository: https://github.com/op7ic/DCOM-Audit
 #>
 
 [CmdletBinding()]
