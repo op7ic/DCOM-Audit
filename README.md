@@ -28,18 +28,6 @@ A comprehensive PowerShell-based security auditing tool for Windows DCOM (Distri
 - **x86/x64 Compatibility**: Handles architecture mismatches gracefully
 - **Method Detection**: Uses multiple techniques to enumerate methods
 
-### Attack Scenario Mapping
-- Real-world exploitation examples for each vulnerability
-- MITRE ATT&CK technique mapping
-- Detection and prevention guidance
-- Sample attack code for security testing
-
-### Enhanced Detection Capabilities
-- SIEM/EDR detection rules in multiple formats (Sigma, Splunk, ELK, KQL)
-- PowerShell logging recommendations
-- Network-based detection strategies
-- Behavioral indicators of compromise
-
 ## 📋 Requirements
 
 - Windows 7/Server 2008 R2 or later
