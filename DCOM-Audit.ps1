@@ -96,7 +96,8 @@ $HighRiskPrincipals = @(
     "NT AUTHORITY\Authenticated Users",
     "BUILTIN\Users",
     "Domain Users",
-    "ALL APPLICATION PACKAGES"
+    "ALL APPLICATION PACKAGES",
+	"INTERACTIVE USER"
 )
 
 # Results storage
